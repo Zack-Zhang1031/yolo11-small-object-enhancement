@@ -1,0 +1,1 @@
+"""Bundled Ultralytics model configurations."""

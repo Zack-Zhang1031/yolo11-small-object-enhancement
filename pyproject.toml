@@ -1,0 +1,58 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "yolo11-small-object-enhancement"
+version = "0.2.0"
+description = "YOLO11 small-object detection with MobileViT, MSCA, and a P2 head"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "AGPL-3.0-only"
+dependencies = [
+  "torch>=2.2,<3.0",
+  "ultralytics==8.4.118",
+  "PyYAML>=6.0,<7.0",
+  "numpy>=1.23,<3.0",
+  "opencv-python>=4.8,<6.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "build>=1.2,<2.0",
+  "mypy>=1.10,<2.0",
+  "pytest>=8.0,<9.0",
+  "ruff>=0.9,<1.0",
+]
+
+[project.scripts]
+yolo11-enhanced-train = "yolo11_small_object_enhancement.cli:train_entrypoint"
+yolo11-enhanced-inspect = "yolo11_small_object_enhancement.cli:inspect_entrypoint"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+yolo11_small_object_enhancement = ["configs/*.yaml"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--strict-markers"
+pythonpath = ["src"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "RUF"]
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+packages = ["yolo11_small_object_enhancement"]
+mypy_path = "src"
+ignore_missing_imports = true
+no_site_packages = true
+follow_imports = "skip"
+disallow_subclassing_any = false
