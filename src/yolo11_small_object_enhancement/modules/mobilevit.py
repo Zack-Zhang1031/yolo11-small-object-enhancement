@@ -11,6 +11,41 @@ from torch.nn import functional as F
 from .common import ConvNormAct, DepthwiseSeparableConv
 
 
+class ExportableTransformerBlock(nn.Module):
+    """Pre-norm attention block expressed with ONNX-supported tensor operations."""
+
+    def __init__(self, dim: int, num_heads: int, mlp_ratio: float) -> None:
+        super().__init__()
+        hidden_dim = int(dim * mlp_ratio)
+        self.num_heads = num_heads
+        self.head_dim = dim // num_heads
+        self.scale = self.head_dim**-0.5
+        self.norm1 = nn.LayerNorm(dim)
+        self.qkv = nn.Linear(dim, dim * 3)
+        self.projection = nn.Linear(dim, dim)
+        self.norm2 = nn.LayerNorm(dim)
+        self.mlp = nn.Sequential(nn.Linear(dim, hidden_dim), nn.GELU(), nn.Linear(hidden_dim, dim))
+
+    def _attention(self, x: torch.Tensor) -> torch.Tensor:
+        """Compute multi-head self-attention with portable matrix operations."""
+        batch, tokens, channels = x.shape
+        qkv = (
+            self.qkv(x)
+            .reshape(batch, tokens, 3, self.num_heads, self.head_dim)
+            .permute(2, 0, 3, 1, 4)
+        )
+        query, key, value = qkv.unbind(0)
+        weights = torch.matmul(query, key.transpose(-2, -1)) * self.scale
+        attended = torch.matmul(weights.softmax(dim=-1), value)
+        return self.projection(attended.transpose(1, 2).reshape(batch, tokens, channels))
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """Apply self-attention and feed-forward residual updates."""
+        normalized = self.norm1(x)
+        x = x + self._attention(normalized)
+        return x + self.mlp(self.norm2(x))
+
+
 class MobileViTBlock(nn.Module):
     """Combine local convolutions and global token attention at constant resolution."""
 
@@ -41,19 +76,8 @@ class MobileViTBlock(nn.Module):
             DepthwiseSeparableConv(c1, c1, 3),
             ConvNormAct(c1, transformer_dim, 1),
         )
-        encoder_layer = nn.TransformerEncoderLayer(
-            d_model=transformer_dim,
-            nhead=num_heads,
-            dim_feedforward=int(transformer_dim * mlp_ratio),
-            dropout=0.0,
-            activation="gelu",
-            batch_first=True,
-            norm_first=True,
-        )
-        self.transformer = nn.TransformerEncoder(
-            encoder_layer,
-            num_layers=depth,
-            enable_nested_tensor=False,
+        self.transformer = nn.Sequential(
+            *(ExportableTransformerBlock(transformer_dim, num_heads, mlp_ratio) for _ in range(depth))
         )
         self.global_projection = ConvNormAct(transformer_dim, c2, 1)
         self.fusion = DepthwiseSeparableConv(c1 + c2, c2, 3)

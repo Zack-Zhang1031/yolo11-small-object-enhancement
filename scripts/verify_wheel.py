@@ -25,8 +25,8 @@ def main() -> int:
     with zipfile.ZipFile(wheel) as archive:
         names = archive.namelist()
     configs = [name for name in names if name.endswith(".yaml")]
-    if len(configs) != 5:
-        raise RuntimeError(f"expected 5 bundled model configs, found {len(configs)}")
+    if len(configs) != 6:
+        raise RuntimeError(f"expected 6 bundled model configs, found {len(configs)}")
     subprocess.run(
         [sys.executable, "-m", "pip", "install", "--force-reinstall", "--no-deps", str(wheel)],
         check=True,
@@ -35,6 +35,8 @@ def main() -> int:
         "from yolo11_small_object_enhancement import build_model, create_yolo; "
         "model=build_model('mobilevit-msca-p2'); "
         "assert model.stride.int().tolist()==[4,8,16,32]; "
+        "edge=build_model('mobilevit-msca-p2-edge'); "
+        "assert sum(p.numel() for p in edge.parameters())<3100000; "
         "assert create_yolo('mobilevit-msca-p2').model is not None; "
         "print('Wheel install: PASS')"
     )

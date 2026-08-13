@@ -13,6 +13,12 @@ def test_bundled_configuration_is_available() -> None:
         assert "MobileViTBlock" in path.read_text(encoding="utf-8")
 
 
+def test_edge_configuration_is_bundled() -> None:
+    with config_path("mobilevit-msca-p2-edge") as path:
+        assert path.is_file()
+        assert "scale: n" in path.read_text(encoding="utf-8")
+
+
 def test_padding_aligns_odd_rectangular_input() -> None:
     padded, padding = pad_to_stride(torch.zeros(1, 3, 321, 511))
     assert padded.shape == (1, 3, 352, 512)

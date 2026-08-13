@@ -25,6 +25,8 @@ jobs:
       - run: python -m compileall src scripts tests -q
       - run: python -m pytest -q
       - run: python scripts/build_all.py
+      - run: python scripts/compare_visdrone.py --data configs/visdrone.yaml --dry-run
+      - run: python scripts/train.py --model mobilevit-msca-p2-edge --data configs/visdrone.yaml --device cpu --dry-run
       - run: python scripts/smoke_test.py
       - run: python -m build --wheel
       - shell: python

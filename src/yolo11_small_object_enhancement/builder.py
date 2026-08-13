@@ -36,6 +36,11 @@ MODEL_SPECS: dict[str, ModelSpec] = {
         ModelSpec("msca", "YOLO11-MSCA", "yolo11_msca.yaml"),
         ModelSpec("mobilevit-msca", "YOLO11-MobileViT-MSCA", "yolo11_mobilevit_msca.yaml"),
         ModelSpec("mobilevit-msca-p2", "YOLO11-MobileViT-MSCA-P2", "yolo11_mobilevit_msca_p2.yaml"),
+        ModelSpec(
+            "mobilevit-msca-p2-edge",
+            "YOLO11-MobileViT-MSCA-P2 Edge",
+            "yolo11_mobilevit_msca_p2_edge.yaml",
+        ),
     )
 }
 

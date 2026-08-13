@@ -36,3 +36,10 @@ def test_mobilevit_variant_stays_close_to_baseline_parameter_count() -> None:
     baseline = sum(parameter.numel() for parameter in build_model("baseline").parameters())
     mobilevit = sum(parameter.numel() for parameter in build_model("mobilevit").parameters())
     assert mobilevit < baseline * 1.25
+
+
+def test_edge_student_parameter_budget() -> None:
+    edge = sum(parameter.numel() for parameter in build_model("mobilevit-msca-p2-edge").parameters())
+    full = sum(parameter.numel() for parameter in build_model("mobilevit-msca-p2").parameters())
+    assert edge < 3_100_000
+    assert edge < full * 0.3

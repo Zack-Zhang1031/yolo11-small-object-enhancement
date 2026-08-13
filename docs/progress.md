@@ -1,6 +1,6 @@
 # Progress
 
-- [x] Five model variants implemented
+- [x] Six model variants implemented, including a 2.999M-parameter edge student
 - [x] MobileViT and MSCA modules integrated with Ultralytics
 - [x] P2/P3/P4/P5 Detect inputs verified at strides 4/8/16/32
 - [x] Src-layout package includes all YAML resources
@@ -9,6 +9,7 @@
 - [x] MobileViT parameter count reduced to 10.634M
 - [x] Windows and Linux CI matrix added
 - [x] AGPL-3.0-only licensing aligned with the default Ultralytics license
-- [x] 25 unit and integration tests passing locally
-
-Next checkpoint: run the workflow on GitHub Actions and review dataset-specific experiment settings.
+- [x] Controlled YOLO11/YOLO12/RT-DETR VisDrone comparison runner implemented
+- [x] Native feature distillation, edge export, parity, and backend benchmark tools implemented
+- [x] Exportable explicit-QKV MobileViT attention verified against ONNX Runtime
+- [x] VisDrone preparation and CUDA preflight tools implemented

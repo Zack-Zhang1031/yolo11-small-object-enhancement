@@ -2,6 +2,7 @@
 
 import pytest
 import torch
+from torch import nn
 
 from yolo11_small_object_enhancement.modules import MobileViTBlock
 
@@ -14,6 +15,12 @@ def test_mobilevit_preserves_declared_shape_and_supports_backward() -> None:
     output.mean().backward()
     assert input_tensor.grad is not None
     assert torch.isfinite(input_tensor.grad).all()
+
+
+def test_mobilevit_avoids_fused_transformer_encoder_layer() -> None:
+    block = MobileViTBlock(16, 16, transformer_dim=16, depth=1, patch_size=2, num_heads=4)
+    assert not any(isinstance(module, nn.TransformerEncoderLayer) for module in block.modules())
+    assert not any(isinstance(module, nn.MultiheadAttention) for module in block.modules())
 
 
 @pytest.mark.parametrize(

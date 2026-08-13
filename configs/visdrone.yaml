@@ -1,5 +1,4 @@
-# Dataset paths are placeholders for future user-supplied VisDrone data.
-path: ../datasets/VisDrone
+path: VisDrone
 train: images/train
 val: images/val
 test: images/test

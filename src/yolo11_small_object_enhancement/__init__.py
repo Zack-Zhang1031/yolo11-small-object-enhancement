@@ -9,7 +9,7 @@ from .builder import (
     predict_tensor,
     register_custom_modules,
 )
-from .training import create_yolo
+from .training import create_yolo, train_distilled_model, validate_distillation_pair
 
 __all__ = [
     "MODEL_SPECS",
@@ -20,4 +20,6 @@ __all__ = [
     "pad_to_stride",
     "predict_tensor",
     "register_custom_modules",
+    "train_distilled_model",
+    "validate_distillation_pair",
 ]
