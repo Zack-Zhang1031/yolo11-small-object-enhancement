@@ -123,22 +123,6 @@ RT-DETR-L is intentionally included as an accuracy-oriented reference. Its relea
 
 Run `--dry-run` first to inspect the complete matrix without downloading comparison weights or starting training.
 
-## Experimental Results
-
-The SAHI (Slicing-Aided Hyper Inference) pipeline combined with fine-tuning on VisDrone yields significant improvements for small-object detection.
-
-| Metric | Baseline (YOLO11) | Enhanced (SAHI + Fine-tune) | Improvement |
-|---|---:|---:|---|
-| Small-object mAP@50-95 | 0.099 | 0.203 | **+105% (doubled)** |
-| Overall mAP | 0.190 | 0.297 | **+56.3%** |
-| mAP@0.5 | — | — | **+12.7 pp** |
-| Small-object AP | — | — | **+24.3%** |
-
-Key findings:
-
-- **SAHI slicing + fine-tuning doubles small-object mAP@50-95** (0.099 → 0.203) on VisDrone, confirming that sliced inference recovers dense small targets that full-image downscaling misses.
-- **Overall mAP increases by 56%** (0.190 → 0.297), showing that the P2 stride-4 head and MSCA attention amplify the gains from SAHI.
-- **mAP@0.5 improves by 12.7 percentage points**, and **small-object AP improves by 24.3%**, demonstrating robust gains across IoU thresholds.
 
 ## Knowledge Distillation and Edge Export
 
